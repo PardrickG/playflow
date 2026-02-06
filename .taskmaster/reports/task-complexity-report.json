@@ -1,0 +1,157 @@
+{
+	"meta": {
+		"generatedAt": "2026-02-06T00:32:13.119Z",
+		"tasksAnalyzed": 18,
+		"totalTasks": 23,
+		"analysisCount": 18,
+		"thresholdScore": 5,
+		"projectName": "Task Master",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 5,
+			"taskTitle": "Campaign Studio - No-Code Builder UI",
+			"complexityScore": 8,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the Campaign Studio UI development into subtasks covering: (1) drag-and-drop builder core implementation, (2) template gallery and selection system, (3) block-based editor for Flow configuration, (4) brand kit and customization system, and (5) preview mode with validation and publishing workflow.",
+			"reasoning": "This task involves building a complex visual editor with drag-and-drop functionality, which is inherently challenging. It requires implementing React DnD (or similar), creating a template system, building a block-based editor, implementing real-time preview, and handling validation. The task also includes version management and template reuse functionality. The UI must be intuitive while enforcing the underlying schema constraints. The existing 3 subtasks are a good start but don't fully cover all aspects - particularly the brand kit system and publishing workflow deserve their own subtasks given their complexity."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Event Ingestion & Processing Pipeline",
+			"complexityScore": 9,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down the event ingestion and processing pipeline into subtasks for: (1) Cloudflare Worker ingestion endpoint with validation, (2) queue setup and management with Upstash Redis, (3) BullMQ worker implementation for different event types, (4) aggregation workers for metrics calculation, and (5) monitoring, logging and retry mechanism implementation.",
+			"reasoning": "This task involves building a distributed system with multiple components that must work together reliably. It requires implementing a high-performance ingestion endpoint, setting up queues, building workers for event processing, implementing aggregation logic, and adding retry mechanisms. The system must handle high volumes of data with proper error handling and logging. The complexity is increased by the need to ensure data consistency across distributed components and implement proper retry logic. The task also involves deployment to multiple platforms (Cloudflare, Upstash, Fly.io/Railway) which adds operational complexity."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Prize Engine & Reward System",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the prize engine and reward system into subtasks for: (1) prize configuration and probability management, (2) unique code generation and inventory system, (3) concurrent prize assignment with proper locking mechanisms, and (4) prize delivery and analytics implementation.",
+			"reasoning": "This task involves building a system that must handle probabilistic outcomes correctly while ensuring fairness and preventing duplicate code issuance. The complexity comes from the need to handle concurrency properly (to avoid duplicate prizes), manage inventory limits, and implement a statistically accurate probability engine. The task also requires building a code generation/import system and prize delivery mechanisms. The existing 3 subtasks are good but should be expanded to specifically address the concurrency challenges, which are among the most complex aspects of this system."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Form Capture & Data Collection",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the form capture and data collection system into subtasks for: (1) dynamic form builder with custom field types, (2) GDPR-compliant consent system and privacy controls, (3) form validation, submission handling and data storage, and (4) integration field mapping and analytics implementation.",
+			"reasoning": "This task requires building a flexible form system with support for various field types, GDPR compliance, and data integration capabilities. The complexity comes from ensuring proper data validation, handling consent properly, and implementing secure data storage with proper encryption. The task also involves building analytics for form conversions and implementing field mapping for integrations. The existing 3 subtasks cover most aspects but could be reorganized to better separate concerns between the form builder UI, the data handling backend, and the compliance/privacy requirements."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Integration System - Webhooks & Native Connectors",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the integration system into subtasks for: (1) integration management framework with credential encryption, (2) webhook integration with retry logic and failure handling, (3) native Klaviyo connector implementation with OAuth flow, and (4) HubSpot connector implementation with data synchronization.",
+			"reasoning": "This task involves building a complex integration system that must securely handle credentials, implement webhook delivery with retry logic, and build native connectors to third-party systems. The complexity comes from the need to implement OAuth flows, handle API rate limits, ensure idempotency for repeated events, and provide proper error handling and logging. The task also requires building a job queue for integration tasks and implementing monitoring. The existing 3 subtasks are appropriate but could be refined to better separate the two native integrations (Klaviyo and HubSpot) which likely have different requirements and APIs."
+		},
+		{
+			"taskId": 11,
+			"taskTitle": "Analytics Dashboard & Reporting",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the analytics dashboard and reporting system into subtasks for: (1) core dashboard UI with key metrics visualization, (2) real-time data updates with WebSocket or polling, (3) funnel visualization and campaign comparison tools, and (4) export functionality and performance monitoring implementation.",
+			"reasoning": "This task requires building a comprehensive analytics dashboard with real-time updates and various visualizations. The complexity comes from the need to handle and visualize large datasets, implement real-time updates, and ensure accurate calculations for metrics and funnels. The task also involves integrating with PostHog for advanced analytics and implementing export functionality. While not the most technically complex task, it requires careful attention to performance and user experience to ensure the dashboard remains responsive even with large datasets."
+		},
+		{
+			"taskId": 12,
+			"taskTitle": "Game Templates & Asset Management",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the game templates and asset management system into subtasks for: (1) spin-to-win and scratchcard game implementations, (2) quiz and poll/survey game implementations, (3) asset management system for images, audio, and resources, and (4) game customization, preview and testing tools.",
+			"reasoning": "This task involves implementing multiple interactive game types with different mechanics and a comprehensive asset management system. The complexity comes from the need to create engaging, responsive games that work across devices and browsers. Each game type (spin-to-win, scratchcard, quiz, poll/survey) has its own unique interaction patterns and visual requirements. The task also requires building an asset management system for handling various media types and implementing preview/testing tools. The existing 3 subtasks are good but could be reorganized to better group the game implementations by type."
+		},
+		{
+			"taskId": 13,
+			"taskTitle": "Set up data model and Prisma",
+			"complexityScore": 6,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the data model and Prisma setup into subtasks for: (1) core entity tables (workspaces, users, campaigns), (2) operational tables (prizes, submissions, events), and (3) integration and analytics tables with proper indexing and relationships.",
+			"reasoning": "This task involves designing and implementing the database schema using Prisma. While not the most technically complex task, it requires careful consideration of relationships between entities, proper indexing for performance, and ensuring multi-tenant isolation. The schema must support all the features of the application while maintaining data integrity and performance. The complexity is moderate as Prisma abstracts away much of the database complexity, but the design decisions made here will impact the entire application."
+		},
+		{
+			"taskId": 14,
+			"taskTitle": "Implement authentication and RBAC middleware",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the authentication and RBAC middleware implementation into subtasks for: (1) Clerk/Auth0 integration for user authentication, (2) workspace-scoped access control middleware, and (3) role-based permission system for different resource types.",
+			"reasoning": "This task involves implementing a secure authentication system with role-based access control across multiple workspaces. The complexity comes from ensuring proper workspace isolation, implementing fine-grained permissions based on user roles, and integrating with a third-party authentication provider. The middleware must be applied consistently across all API endpoints and must handle edge cases like token expiration and permission changes. Security is critical here, making thorough testing essential."
+		},
+		{
+			"taskId": 15,
+			"taskTitle": "Define the campaign configuration schema",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the campaign configuration schema definition into subtasks for: (1) core Flow and Block type definitions with Zod, (2) validation logic for different block types and their relationships, and (3) versioning support and schema evolution strategy.",
+			"reasoning": "This task involves designing a flexible yet strict schema for campaign configurations using Zod. The complexity comes from the need to model various block types and their relationships while ensuring the schema can validate complex configurations. The schema must support versioning for immutable campaign configurations and include validation logic for all possible configurations. The design decisions made here will impact both the builder UI and the runtime behavior of campaigns."
+		},
+		{
+			"taskId": 16,
+			"taskTitle": "Implement the basic Campaign Studio UI",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the Campaign Studio UI implementation into subtasks for: (1) Next.js admin UI setup with React components, (2) drag-and-drop builder integration with schema validation, (3) template selection and branding customization, and (4) campaign preview and publishing workflow.",
+			"reasoning": "This task involves building a complex UI for creating and editing campaigns using the defined schema. The complexity comes from implementing a drag-and-drop builder that enforces schema constraints, integrating with the campaign configuration schema, and providing preview functionality. The UI must be intuitive while ensuring users cannot create invalid configurations. The task also requires implementing template selection, branding customization, and a publishing workflow. This is a core part of the application that directly impacts user experience."
+		},
+		{
+			"taskId": 17,
+			"taskTitle": "Develop the customer-facing snippet",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the customer-facing snippet development into subtasks for: (1) core snippet architecture with asynchronous loading, (2) campaign configuration fetching and rendering, (3) trigger event handling and popup display, and (4) event tracking with batching and retry logic.",
+			"reasoning": "This task involves building a lightweight, performant JavaScript snippet that customers will embed on their websites. The complexity comes from the need to keep the snippet small (<50KB gzipped) while implementing all required functionality. The snippet must handle trigger events, render the campaign experience, and track user interactions. It also needs to batch and retry event submissions to ensure data reliability. Performance and compatibility across browsers and devices are critical considerations."
+		},
+		{
+			"taskId": 18,
+			"taskTitle": "Implement the event ingestion pipeline",
+			"complexityScore": 8,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the event ingestion pipeline implementation into subtasks for: (1) ingestion endpoint creation with Cloudflare Worker, (2) event validation and workspace metadata attachment, (3) queue setup with Upstash Redis or AWS SQS, and (4) worker processes for event consumption and processing.",
+			"reasoning": "This task involves building a distributed system for ingesting, queuing, and processing events from the customer-facing snippet. The complexity comes from the need to handle high volumes of events reliably, validate and enrich events with metadata, and process them asynchronously. The system must be scalable, fault-tolerant, and ensure no data loss. The task requires working with multiple technologies (Cloudflare Workers, Redis/SQS, BullMQ/Trigger.dev) and ensuring they work together seamlessly."
+		},
+		{
+			"taskId": 19,
+			"taskTitle": "Implement the prize engine",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the prize engine implementation into subtasks for: (1) prize configuration and inventory management, (2) prize issuance logic with concurrency control, and (3) integration with the event pipeline for prize award events.",
+			"reasoning": "This task involves building a system to define, issue, and manage prizes for gamified experiences. The complexity comes from the need to configure prize odds, manage inventory limits, and ensure prizes are not over-issued. The system must handle concurrent prize requests and log all issuances for auditing. The task also requires integrating with the event pipeline to handle prize award events. While challenging, the scope is more contained than some of the other tasks."
+		},
+		{
+			"taskId": 20,
+			"taskTitle": "Implement the form capture and submission storage",
+			"complexityScore": 6,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the form capture and submission storage implementation into subtasks for: (1) form block schema definition and validation, (2) form capture integration in the customer-facing snippet, and (3) submission storage with workspace and campaign metadata.",
+			"reasoning": "This task involves building functionality to capture and store form submissions from gamified experiences. The complexity is moderate as it builds on existing components (schema, snippet, database). The task requires defining the form block in the schema, integrating form capture in the snippet, and storing submissions with proper metadata. While important, this task is more straightforward than some of the other tasks as it leverages existing infrastructure."
+		},
+		{
+			"taskId": 21,
+			"taskTitle": "Implement the webhook integration",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the webhook integration implementation into subtasks for: (1) integration configuration storage and management, (2) webhook sending logic with payload formatting, and (3) retry mechanism with backoff and status tracking.",
+			"reasoning": "This task involves building functionality to send campaign events and data to external systems via webhooks. The complexity comes from the need to configure webhook endpoints, format payloads, and implement retry logic with backoff. The system must track integration job status and provide visibility into failures. The task requires careful error handling and logging to ensure reliable delivery of events to external systems."
+		},
+		{
+			"taskId": 22,
+			"taskTitle": "Build the analytics dashboard",
+			"complexityScore": 7,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the analytics dashboard implementation into subtasks for: (1) aggregated metrics storage and calculation, (2) dashboard UI with charts and visualizations, and (3) filtering and breakdown functionality by campaign version and other dimensions.",
+			"reasoning": "This task involves implementing reporting and analytics functionality to provide insights into campaign performance. The complexity comes from the need to aggregate and visualize metrics from event data, integrate with an analytics platform, and provide filtering and breakdown capabilities. The dashboard must accurately reflect campaign performance and be consistent with the underlying event data. While challenging, the task is more focused on data visualization than complex business logic."
+		},
+		{
+			"taskId": 23,
+			"taskTitle": "Polish the platform and prepare for launch",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the platform polishing and launch preparation into subtasks for: (1) game template library expansion, (2) brand kit feature implementation, (3) comprehensive QA testing and bug fixing, and (4) documentation and onboarding materials creation.",
+			"reasoning": "This task involves finalizing the MVP by implementing additional features, improving the user experience, and ensuring comprehensive testing and documentation. The complexity is moderate as it builds on existing components and focuses on polishing rather than building new core functionality. The task requires expanding the game template library, implementing a brand kit feature, conducting thorough QA testing, and creating documentation. While broad in scope, the individual components are less technically challenging than some of the core system implementations."
+		}
+	]
+}

@@ -1,0 +1,15 @@
+{
+    "name": "@playflow/widget",
+    "version": "1.0.0",
+    "description": "PlayFlow embeddable widget for gamified campaigns",
+    "main": "dist/playflow.min.js",
+    "scripts": {
+        "build": "esbuild src/widget/playflow.ts --bundle --minify --format=iife --global-name=PlayFlow --outfile=public/widget/playflow.min.js --target=es2020",
+        "build:loader": "esbuild src/widget/loader.js --bundle --minify --format=iife --outfile=public/widget/loader.min.js --target=es2015",
+        "build:all": "npm run build && npm run build:loader",
+        "size": "gzip -c public/widget/playflow.min.js | wc -c"
+    },
+    "devDependencies": {
+        "esbuild": "^0.19.0"
+    }
+}

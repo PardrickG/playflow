@@ -1,0 +1,394 @@
+// Prisma schema for PlayFlow - Gamified Marketing Automation Platform
+// Multi-tenant architecture with workspace_id scoping on all core tables
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
+
+/// Workspace - Core tenant entity for multi-tenancy
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Brand Kit
+  primaryColor   String?
+  secondaryColor String?
+  fontFamily     String?
+
+  // Relations
+  members      WorkspaceMember[]
+  campaigns    Campaign[]
+  assets       Asset[]
+  prizes       Prize[]
+  submissions  Submission[]
+  eventsRaw    EventRaw[]
+  eventsAgg    EventAggDaily[]
+  integrations Integration[]
+
+  @@index([slug])
+}
+
+/// User - Synced from Clerk authentication
+model User {
+  id         String   @id // Clerk user ID
+  email      String   @unique
+  firstName  String?
+  lastName   String?
+  avatarUrl  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  memberships WorkspaceMember[]
+
+  @@index([email])
+}
+
+/// WorkspaceMember - Join table with RBAC roles
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        Role     @default(EDITOR)
+  invitedAt   DateTime @default(now())
+  acceptedAt  DateTime?
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  ANALYST
+}
+
+// ============================================================================
+// CAMPAIGN ENTITIES
+// ============================================================================
+
+/// Campaign - Campaign metadata with workspace scoping
+model Campaign {
+  id          String         @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  status      CampaignStatus @default(DRAFT)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Current active version
+  activeVersionId String? @unique
+
+  // Relations
+  workspace     Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  versions      CampaignVersion[]
+  activeVersion CampaignVersion?  @relation("ActiveVersion", fields: [activeVersionId], references: [id])
+  prizes        Prize[]
+  submissions   Submission[]
+  eventsRaw     EventRaw[]
+  eventsAgg     EventAggDaily[]
+
+  @@index([workspaceId])
+  @@index([status])
+}
+
+enum CampaignStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  ARCHIVED
+}
+
+/// CampaignVersion - Immutable version snapshots
+model CampaignVersion {
+  id         String   @id @default(cuid())
+  campaignId String
+  version    Int
+  config     Json     // Flow configuration with Blocks
+  createdAt  DateTime @default(now())
+
+  // Snapshot of settings at publish time
+  triggerConfig Json? // Trigger settings
+  gameConfig    Json? // Game template settings
+
+  // Relations
+  campaign       Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  activeCampaign Campaign? @relation("ActiveVersion")
+
+  @@unique([campaignId, version])
+  @@index([campaignId])
+}
+
+// ============================================================================
+// ASSETS & MEDIA
+// ============================================================================
+
+/// Asset - Media files for games/campaigns
+model Asset {
+  id          String    @id @default(cuid())
+  workspaceId String
+  name        String
+  type        AssetType
+  url         String
+  mimeType    String?
+  sizeBytes   Int?
+  metadata    Json?     // Dimensions, duration, etc.
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([type])
+}
+
+enum AssetType {
+  IMAGE
+  AUDIO
+  VIDEO
+  FONT
+}
+
+// ============================================================================
+// PRIZE & REWARD SYSTEM
+// ============================================================================
+
+/// Prize - Prize configuration with probabilities
+model Prize {
+  id          String   @id @default(cuid())
+  workspaceId String
+  campaignId  String
+  name        String
+  description String?
+  imageUrl    String?
+  probability Float    // 0.0 to 1.0
+  quantity    Int?     // null = unlimited
+  claimed     Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Consolation prize flag
+  isConsolation Boolean @default(false)
+
+  // Relations
+  workspace Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  campaign  Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  codes     PrizeCode[]
+
+  @@index([workspaceId])
+  @@index([campaignId])
+  @@index([isActive])
+}
+
+/// PrizeCode - Unique coupon codes with status tracking
+model PrizeCode {
+  id        String          @id @default(cuid())
+  prizeId   String
+  code      String
+  status    PrizeCodeStatus @default(AVAILABLE)
+  claimedAt DateTime?
+  claimedBy String?         // Submission ID or email
+
+  // Relations
+  prize Prize @relation(fields: [prizeId], references: [id], onDelete: Cascade)
+
+  @@unique([prizeId, code])
+  @@index([prizeId])
+  @@index([status])
+  @@index([code])
+}
+
+enum PrizeCodeStatus {
+  AVAILABLE
+  CLAIMED
+  EXPIRED
+}
+
+// ============================================================================
+// FORM SUBMISSIONS & DATA COLLECTION
+// ============================================================================
+
+/// Submission - Form submissions with consent flags
+model Submission {
+  id          String   @id @default(cuid())
+  workspaceId String
+  campaignId  String
+  sessionId   String   // Browser session ID
+  email       String?
+  phone       String?
+  data        Json     // Dynamic form fields
+  consent     Boolean  @default(false)
+  consentText String?  // GDPR consent wording shown
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // Prize assignment
+  prizeWon    String?
+  prizeCodeId String?
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  campaign  Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([campaignId])
+  @@index([email])
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// EVENTS & ANALYTICS
+// ============================================================================
+
+/// EventRaw - Raw event ingestion table
+model EventRaw {
+  id          String    @id @default(cuid())
+  workspaceId String
+  campaignId  String
+  sessionId   String
+  eventType   EventType
+  payload     Json?
+  timestamp   DateTime  @default(now())
+  processed   Boolean   @default(false)
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  campaign  Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@index([campaignId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@index([processed])
+}
+
+enum EventType {
+  IMPRESSION
+  OPEN
+  CLOSE
+  START_GAME
+  FINISH_GAME
+  FORM_SUBMIT
+  PRIZE_AWARDED
+  CTA_CLICK
+}
+
+/// EventAggDaily - Aggregated daily metrics
+model EventAggDaily {
+  id          String   @id @default(cuid())
+  workspaceId String
+  campaignId  String
+  date        DateTime @db.Date
+  
+  // Metrics
+  impressions   Int @default(0)
+  opens         Int @default(0)
+  closes        Int @default(0)
+  gameStarts    Int @default(0)
+  gameFinishes  Int @default(0)
+  formSubmits   Int @default(0)
+  prizesAwarded Int @default(0)
+  ctaClicks     Int @default(0)
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  campaign  Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, campaignId, date])
+  @@index([workspaceId])
+  @@index([campaignId])
+  @@index([date])
+}
+
+// ============================================================================
+// INTEGRATIONS
+// ============================================================================
+
+/// Integration - OAuth credentials (encrypted)
+model Integration {
+  id           String          @id @default(cuid())
+  workspaceId  String
+  provider     IntegrationProvider
+  name         String
+  credentials  Json            // Encrypted OAuth tokens
+  settings     Json?           // Provider-specific settings
+  isActive     Boolean         @default(true)
+  lastSyncAt   DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  // Relations
+  workspace Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  jobs      IntegrationJob[]
+
+  @@unique([workspaceId, provider, name])
+  @@index([workspaceId])
+  @@index([provider])
+}
+
+enum IntegrationProvider {
+  WEBHOOK
+  KLAVIYO
+  HUBSPOT
+}
+
+/// IntegrationJob - Async job queue for syncs
+model IntegrationJob {
+  id            String             @id @default(cuid())
+  integrationId String
+  type          IntegrationJobType
+  payload       Json
+  status        JobStatus          @default(PENDING)
+  attempts      Int                @default(0)
+  maxAttempts   Int                @default(3)
+  lastError     String?
+  scheduledFor  DateTime           @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime           @default(now())
+
+  // Relations
+  integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+enum IntegrationJobType {
+  SYNC_CONTACT
+  ADD_TAG
+  SEND_EVENT
+  WEBHOOK_DELIVERY
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  RETRYING
+}

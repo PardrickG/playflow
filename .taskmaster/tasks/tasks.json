@@ -1,0 +1,1412 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "1",
+        "title": "Database Schema & Prisma Setup",
+        "description": "Set up PostgreSQL database with Prisma ORM and create all required tables for multi-tenant architecture",
+        "details": "Create Prisma schema with tables: workspaces, users, workspace_members, campaigns, campaign_versions, assets, prizes, prize_codes, submissions, events_raw, events_agg_daily, integrations, integration_jobs. Implement workspace_id scoping on all core tables. Set up Neon PostgreSQL instance. Configure database migrations and seeding. Ensure strict tenant isolation with proper foreign key relationships and indexes for performance.",
+        "testStrategy": "Unit tests for Prisma models, integration tests for database operations, test tenant isolation by attempting cross-workspace data access, validate all required fields and constraints",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Prisma Models and Database Schema",
+            "description": "Define Prisma models for all required database tables, including workspaces, users, campaigns, and other core entities. Set up the Neon PostgreSQL instance and configure the database schema.",
+            "dependencies": [],
+            "details": "1. Define Prisma models for workspaces, users, workspace_members, campaigns, campaign_versions, assets, prizes, prize_codes, submissions, events_raw, events_agg_daily, integrations, and integration_jobs.\n2. Implement workspace_id scoping on all core tables to ensure strict tenant isolation.\n3. Set up the Neon PostgreSQL instance and configure the database schema with proper foreign key relationships and indexes for performance.",
+            "status": "done",
+            "testStrategy": "Unit tests for Prisma models, integration tests for database operations, test tenant isolation by attempting cross-workspace data access, validate all required fields and constraints",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-05T23:56:39.734Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Workspace-Scoped Tenant Isolation",
+            "description": "Ensure strict tenant isolation by implementing workspace_id scoping and access control across all database operations and API endpoints.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Create middleware for workspace scoping that validates workspace_id on all requests.\n2. Implement RBAC with roles: Owner, Admin, Editor, Analyst, and set up permissions for each role.\n3. Ensure all API endpoints are protected and workspace-scoped to prevent cross-workspace data access.",
+            "status": "done",
+            "testStrategy": "Test workspace isolation by attempting cross-workspace data access, verify RBAC permissions for each role, test all API endpoints for proper workspace scoping",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-05T23:56:56.835Z"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 2,
+        "expansionPrompt": "Break down the database schema setup into subtasks for creating the Prisma models and configuring the Neon PostgreSQL instance. Also consider adding a subtask for implementing the workspace_id scoping and tenant isolation logic.",
+        "updatedAt": "2026-02-05T23:56:56.835Z"
+      },
+      {
+        "id": "2",
+        "title": "Authentication & RBAC System",
+        "description": "Implement Clerk authentication with workspace-based multi-tenancy and role-based access control",
+        "details": "Integrate Clerk for authentication. Create middleware for workspace scoping that validates workspace_id on all requests. Implement RBAC with roles: Owner, Admin, Editor, Analyst. Create workspace invitation system. Set up session management and JWT validation. Ensure all API endpoints are protected and workspace-scoped. Create user management UI components.",
+        "testStrategy": "Test authentication flows, verify RBAC permissions for each role, test workspace isolation, validate JWT tokens, test invitation flows and edge cases",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integrate Clerk for Authentication",
+            "description": "Integrate Clerk authentication service to handle user sign-up, sign-in, and session management",
+            "dependencies": [],
+            "details": "Set up Clerk SDK, create authentication flows for sign-up and sign-in, implement session management and JWT validation",
+            "status": "done",
+            "testStrategy": "Test authentication flows, verify session management, validate JWT tokens",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:04:49.756Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Workspace-based Access Control Middleware",
+            "description": "Create middleware to validate workspace_id on all requests and enforce workspace-based access control",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop middleware to extract and validate workspace_id from requests, ensure all API endpoints are protected and workspace-scoped",
+            "status": "done",
+            "testStrategy": "Test workspace isolation, verify RBAC permissions for each role, validate middleware functionality",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:04:51.579Z"
+          },
+          {
+            "id": 3,
+            "title": "Build User Management UI Components",
+            "description": "Implement user management UI components for RBAC roles, workspace invitations, and user profiles",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create UI components for managing user roles, workspace invitations, and user profiles, integrate with backend APIs",
+            "status": "done",
+            "testStrategy": "Test UI functionality for user management, verify integration with backend APIs",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:05:52.492Z"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Consider breaking down the authentication and RBAC system into subtasks for integrating Clerk, implementing the workspace scoping middleware, and setting up the role-based access control with the user management UI components.",
+        "updatedAt": "2026-02-06T00:05:52.492Z"
+      },
+      {
+        "id": "3",
+        "title": "Campaign Configuration Schema & Validation",
+        "description": "Create Zod schemas for campaign configuration with Flow and Block architecture",
+        "details": "Define comprehensive Zod schemas for campaign configs including Flow structure with Blocks: TriggerBlock, ContainerBlock, GameBlock, FormBlock, OutcomeBlock, CTAActionBlock, IntegrationActionBlock. Implement validation middleware for all campaign operations. Create versioning system for immutable campaign_versions. Set up JSON schema validation for runtime config loading. Include schema for game templates (spin-to-win, scratchcard, quiz, poll/survey).",
+        "testStrategy": "Unit tests for all schema validations, test invalid config rejection, verify versioning works correctly, test schema evolution and backward compatibility",
+        "priority": "high",
+        "dependencies": [
+          "1",
+          "2"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Zod Schemas for Campaign Configuration",
+            "description": "Create comprehensive Zod schemas for the campaign configuration, including the Flow and Block architecture.",
+            "dependencies": [],
+            "details": "Define Zod schemas for the following campaign configuration elements: TriggerBlock, ContainerBlock, GameBlock, FormBlock, OutcomeBlock, CTAActionBlock, IntegrationActionBlock. Ensure the schemas cover all required fields and validation rules.",
+            "status": "done",
+            "testStrategy": "Unit tests for all schema validations",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:08:39.649Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Validation Middleware",
+            "description": "Build validation middleware to enforce the campaign configuration schemas.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement validation middleware to validate all campaign operations against the defined Zod schemas. Ensure the middleware handles invalid configurations and provides meaningful error messages.",
+            "status": "done",
+            "testStrategy": "Test invalid config rejection, verify middleware functionality",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:08:41.411Z"
+          },
+          {
+            "id": 3,
+            "title": "Set up Versioning and JSON Schema Validation",
+            "description": "Create a versioning system for immutable campaign configurations and set up JSON schema validation for runtime config loading.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement a versioning system for campaign configurations to ensure immutability. Set up JSON schema validation to validate the campaign configurations at runtime when loading them from the database.",
+            "status": "done",
+            "testStrategy": "Test schema evolution and backward compatibility, verify versioning system",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:08:43.196Z"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Divide the campaign configuration schema and validation work into subtasks for defining the Zod schemas, implementing the validation middleware, and setting up the versioning and JSON schema validation systems.",
+        "updatedAt": "2026-02-06T00:08:43.196Z"
+      },
+      {
+        "id": "4",
+        "title": "Next.js App Setup & Core API Routes",
+        "description": "Set up Next.js application with App Router, TailwindCSS, shadcn/ui and core API infrastructure",
+        "details": "Initialize Next.js 14+ with App Router, TypeScript, TailwindCSS, and shadcn/ui. Set up project structure with proper separation of concerns. Create core API routes for campaigns, workspaces, users. Implement TanStack Query for data fetching. Set up error handling with Sentry integration. Configure environment variables and deployment settings for Vercel. Create reusable UI components and layout structure.",
+        "testStrategy": "Test API route functionality, verify UI component rendering, test error boundaries, validate environment configuration, test responsive design",
+        "priority": "medium",
+        "dependencies": [
+          "2",
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Next.js App Setup and Configuration",
+            "description": "Set up the Next.js application with App Router, TypeScript, TailwindCSS, and shadcn/ui. Establish the project structure with proper separation of concerns.",
+            "dependencies": [],
+            "details": "Initialize Next.js 14+ with App Router, TypeScript, TailwindCSS, and shadcn/ui. Set up the project structure with proper separation of concerns. Configure environment variables and deployment settings for Vercel.",
+            "status": "done",
+            "testStrategy": "Test UI component rendering, validate environment configuration, test responsive design",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:10:28.906Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Core API Routes",
+            "description": "Create the core API routes for campaigns, workspaces, and users. Implement TanStack Query for data fetching and set up error handling with Sentry integration.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create core API routes for campaigns, workspaces, and users. Implement TanStack Query for data fetching. Set up error handling with Sentry integration. Create reusable UI components and layout structure.",
+            "status": "done",
+            "testStrategy": "Test API route functionality, verify UI component rendering, test error boundaries",
+            "parentId": "undefined",
+            "updatedAt": "2026-02-06T00:10:30.812Z"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 2,
+        "expansionPrompt": "Consider breaking down the Next.js app setup and core API routes into subtasks for the initial project setup and configuration, and the implementation of the core API routes.",
+        "updatedAt": "2026-02-06T00:10:30.812Z"
+      },
+      {
+        "id": "5",
+        "title": "Campaign Studio - No-Code Builder UI",
+        "description": "Build visual campaign builder interface with template selection, customization, and preview functionality",
+        "details": "Create drag-and-drop campaign builder UI using React DnD or similar. Implement template gallery with game categories (Luck, Knowledge). Build block-based editor for Flow configuration. Create brand kit system (colors, fonts, logos). Implement real-time preview mode with test playthrough. Add validation UI for missing fields and invalid configurations. Create save/publish workflow with version management. Include template creation and reuse functionality.",
+        "testStrategy": "E2E tests for campaign creation flow, test drag-and-drop functionality, verify preview accuracy, test validation error handling, test template system",
+        "priority": "medium",
+        "dependencies": [
+          "4"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Drag-and-Drop Builder Core",
+            "description": "Create the foundational drag-and-drop interface for the campaign builder using React DnD or similar library",
+            "dependencies": [],
+            "details": "Set up React DnD (or alternative library) with proper drag sources and drop targets. Implement the core canvas area with grid layout. Create draggable block components that represent different campaign elements. Build the sidebar component library with draggable items. Implement undo/redo functionality for builder actions. Ensure smooth interaction with visual feedback during drag operations.",
+            "status": "pending",
+            "testStrategy": "Unit tests for drag-and-drop functionality, integration tests for component interactions, visual regression tests for UI consistency, accessibility testing for keyboard navigation",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop Template Gallery and Selection System",
+            "description": "Build a browsable template gallery with filtering by game categories and template preview functionality",
+            "dependencies": [
+              1
+            ],
+            "details": "Create template gallery UI with card-based design. Implement filtering by game categories (Luck, Knowledge). Add search functionality for templates. Design and implement template preview cards with key information. Build template selection and import workflow. Create template metadata schema and storage. Implement template tagging and categorization system. Add recently used templates section.",
+            "status": "pending",
+            "testStrategy": "Test template filtering and search functionality, verify template preview accuracy, test template import process, ensure proper categorization display",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Block-Based Editor for Flow Configuration",
+            "description": "Implement the block-based editor that allows users to configure the campaign flow with various block types",
+            "dependencies": [
+              1
+            ],
+            "details": "Build block configuration panels for each block type (TriggerBlock, ContainerBlock, GameBlock, FormBlock, OutcomeBlock, CTAActionBlock, IntegrationActionBlock). Implement property editors for each block type with appropriate UI controls. Create connection system between blocks to define flow. Implement validation against Zod schema in real-time. Add contextual help and tooltips for block configuration. Create block duplication and deletion functionality.",
+            "status": "pending",
+            "testStrategy": "Test configuration of each block type, verify connections between blocks work correctly, test validation error handling, ensure proper schema enforcement",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Brand Kit and Customization System",
+            "description": "Build the brand kit functionality allowing users to define and apply brand assets and styling to campaigns",
+            "dependencies": [
+              1
+            ],
+            "details": "Create brand kit UI with color picker, font selector, and logo uploader. Implement theme system with light/dark mode support. Build asset library for managing uploaded brand assets. Create color palette management with primary/secondary color definition. Implement font pairing recommendations. Add brand preset saving and loading functionality. Create global style application across campaign elements. Implement responsive design controls for different device sizes.",
+            "status": "pending",
+            "testStrategy": "Test brand asset uploads and management, verify theme application across campaign elements, test responsive design controls, ensure brand consistency across preview modes",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Preview Mode with Validation and Publishing Workflow",
+            "description": "Implement the preview functionality with test playthrough, validation UI, and publishing workflow",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Build real-time preview mode with device frame options (mobile, tablet, desktop). Implement test playthrough functionality to simulate user interactions. Create validation UI showing missing fields and invalid configurations. Build publishing workflow with version management. Implement draft/published state management. Create version comparison view. Add rollback functionality to previous versions. Implement template creation from existing campaigns. Add campaign duplication functionality.",
+            "status": "pending",
+            "testStrategy": "Test preview accuracy across device sizes, verify validation error detection and display, test publishing workflow and version management, ensure template creation works correctly",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Break down the Campaign Studio UI development into subtasks covering: (1) drag-and-drop builder core implementation, (2) template gallery and selection system, (3) block-based editor for Flow configuration, (4) brand kit and customization system, and (5) preview mode with validation and publishing workflow.",
+        "updatedAt": "2026-02-06T07:47:28.303Z"
+      },
+      {
+        "id": "6",
+        "title": "Customer Snippet (playflow.js) Development",
+        "description": "Build lightweight JavaScript snippet for campaign delivery with trigger handling and event tracking",
+        "details": "Create async-loading JavaScript snippet (<50KB gzipped). Implement config fetching from CDN with caching. Build popup rendering engine with responsive design. Implement trigger system: time delay, scroll percentage, exit intent, click triggers. Create event batching and retry logic for offline scenarios. Build game rendering components for spin-to-win, scratchcard, quiz, poll/survey. Implement form handling and submission. Add frequency capping with localStorage. Version the snippet for safe rollouts.",
+        "testStrategy": "Cross-browser testing, mobile responsiveness tests, performance testing (bundle size, load time), test trigger accuracy, test offline event batching, test frequency capping",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Config Fetching and Caching",
+            "description": "Design and implement the logic to fetch campaign configuration from a CDN with caching mechanism",
+            "dependencies": [],
+            "details": "Create async-loading JavaScript snippet to fetch config from a CDN. Implement in-memory and localStorage caching to reduce network requests. Handle cache invalidation and expiration.",
+            "status": "pending",
+            "testStrategy": "Unit tests for caching logic, integration tests for CDN fetching, performance tests for cache hit ratio",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Popup Rendering Engine",
+            "description": "Develop the popup rendering engine with responsive design capabilities",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a modular popup rendering engine that can handle different types of popups (e.g., modal, banner, interstitial). Ensure the popups are responsive and work across various devices and screen sizes.",
+            "status": "pending",
+            "testStrategy": "Cross-browser testing, mobile responsiveness tests, accessibility tests",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Trigger System",
+            "description": "Develop the trigger system to handle various user interactions and events",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement trigger types such as time delay, scroll percentage, exit intent, and click triggers. Create event batching and retry logic to handle offline scenarios.",
+            "status": "pending",
+            "testStrategy": "Unit tests for trigger logic, integration tests for trigger accuracy, offline event batching tests",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build Game Rendering Components",
+            "description": "Develop the game rendering components for various game types",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Create reusable game rendering components for spin-to-win, scratchcard, quiz, and poll/survey. Ensure the components are flexible and can be customized based on the campaign configuration.",
+            "status": "pending",
+            "testStrategy": "Unit tests for game components, integration tests for game rendering, user interaction tests",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Consider breaking down the customer snippet development into subtasks for the config fetching and caching, the popup rendering engine, the trigger system, and the game rendering components.",
+        "updatedAt": "2026-02-06T00:29:25.986Z"
+      },
+      {
+        "id": "7",
+        "title": "Event Ingestion & Processing Pipeline",
+        "description": "Build event ingestion system with queue processing for analytics and automation triggers",
+        "details": "Create Cloudflare Worker for event ingestion endpoint. Implement event validation and workspace_id attachment. Set up Upstash Redis queue for event processing. Build BullMQ workers for event processing on Fly.io/Railway. Implement event types: impression, open, close, start_game, finish_game, form_submit, prize_awarded, cta_click. Create aggregation workers for daily metrics. Implement retry logic with exponential backoff. Add structured logging with request IDs.",
+        "testStrategy": "Load testing for ingestion endpoint, test queue processing reliability, verify event aggregation accuracy, test retry mechanisms, validate workspace isolation in events",
+        "priority": "high",
+        "dependencies": [
+          "1",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Cloudflare Worker for Event Ingestion Endpoint",
+            "description": "Create a high-performance Cloudflare Worker that serves as the entry point for all event data with proper validation and workspace identification.",
+            "dependencies": [],
+            "details": "Develop a Cloudflare Worker that accepts POST requests with batched events. Implement JSON schema validation for all event types (impression, open, close, start_game, finish_game, form_submit, prize_awarded, cta_click). Add workspace_id attachment logic based on API key or token in the request. Implement rate limiting to prevent abuse. Add CORS configuration for browser-based submissions. Create error responses with appropriate HTTP status codes and messages. Implement initial request logging with unique request IDs.",
+            "status": "pending",
+            "testStrategy": "Unit tests for schema validation, load testing with simulated high traffic, integration tests verifying workspace_id attachment, test invalid event rejection, verify CORS functionality for browser clients.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Set Up Upstash Redis Queue Infrastructure",
+            "description": "Configure Upstash Redis as the queue backend and implement the queue management system for reliable event processing.",
+            "dependencies": [
+              1
+            ],
+            "details": "Set up Upstash Redis instance with appropriate configuration for durability and performance. Implement queue producer logic in the Cloudflare Worker to push validated events to Redis. Create queue management utilities for monitoring queue depth and performance. Implement queue partitioning by workspace_id or event type if needed for scalability. Add dead-letter queue for failed events. Configure appropriate TTL settings for queue entries. Create queue health monitoring endpoints.",
+            "status": "pending",
+            "testStrategy": "Test queue throughput under load, verify event persistence during service restarts, test queue backpressure mechanisms, validate dead-letter queue functionality, verify queue metrics accuracy.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement BullMQ Workers for Event Processing",
+            "description": "Build worker services using BullMQ to process different event types from the queue with proper handling for each event category.",
+            "dependencies": [
+              2
+            ],
+            "details": "Set up BullMQ worker processes on Fly.io or Railway. Implement separate processing logic for each event type (impression, open, close, start_game, finish_game, form_submit, prize_awarded, cta_click). Create database write operations for event storage. Implement event enrichment with additional metadata. Add concurrency controls to prevent database overload. Create worker auto-scaling configuration based on queue depth. Implement event processing timeouts and circuit breakers for external service calls. Add structured logging for worker operations.",
+            "status": "pending",
+            "testStrategy": "Test processing of each event type, verify database write accuracy, test worker scaling under load, validate timeout and circuit breaker functionality, test concurrency limits.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build Aggregation Workers for Daily Metrics",
+            "description": "Create specialized workers that aggregate raw event data into daily metrics and analytics summaries for dashboards and reporting.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement scheduled aggregation workers that run at regular intervals. Create aggregation logic for daily metrics by workspace, campaign, and event type. Implement efficient database queries using appropriate indexes. Add incremental aggregation to handle late-arriving data. Create rollup tables for different time periods (daily, weekly, monthly). Implement caching layer for frequently accessed metrics. Add data consistency checks between raw events and aggregated metrics. Create backfill functionality for historical data.",
+            "status": "pending",
+            "testStrategy": "Test aggregation accuracy against raw event counts, verify performance of aggregation queries, test incremental updates with late data, validate cache invalidation, test backfill operations for historical data.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Monitoring, Logging and Retry Mechanisms",
+            "description": "Add comprehensive monitoring, structured logging, and reliable retry logic with exponential backoff for the entire event pipeline.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Implement structured logging with correlation IDs across all components. Add exponential backoff retry logic for failed queue operations and external service calls. Create monitoring dashboards for queue depth, processing latency, and error rates. Implement alerting for critical failures and performance degradation. Add detailed error tracking with categorization. Create operational runbooks for common failure scenarios. Implement circuit breakers for dependent services. Add performance tracing for slow operations. Create health check endpoints for all components.",
+            "status": "pending",
+            "testStrategy": "Test retry logic with simulated failures, verify log correlation across components, validate alerting thresholds, test circuit breaker functionality, verify health check accuracy during partial system failures.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 9,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Break down the event ingestion and processing pipeline into subtasks for: (1) Cloudflare Worker ingestion endpoint with validation, (2) queue setup and management with Upstash Redis, (3) BullMQ worker implementation for different event types, (4) aggregation workers for metrics calculation, and (5) monitoring, logging and retry mechanism implementation.",
+        "updatedAt": "2026-02-06T00:42:17.881Z"
+      },
+      {
+        "id": "8",
+        "title": "Prize Engine & Reward System",
+        "description": "Implement prize configuration, probability engine, and unique code management system",
+        "details": "Build prize configuration system with probability/odds settings. Implement unique coupon code generation and import functionality. Create prize inventory management with quantity limits. Build prize assignment logic with proper logging. Implement prize delivery (on-screen display, optional email). Create prize analytics and tracking. Ensure no duplicate code issuance with proper concurrency handling. Add consolation message support for non-winners.",
+        "testStrategy": "Test probability distribution accuracy, verify unique code constraints, test inventory limits, test concurrent prize assignment, validate prize delivery methods",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "7"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Prize Configuration and Probability Management System",
+            "description": "Implement a flexible prize configuration system with probability/odds settings and validation",
+            "dependencies": [],
+            "details": "Create database schema for prize definitions with fields for name, description, probability/odds, start/end dates, and prize types. Build admin UI for prize configuration with validation to ensure probabilities sum to 100%. Implement probability calculation engine that correctly handles weighted distributions. Add support for prize categories and tiers with different probability settings. Include validation to prevent invalid configurations.",
+            "status": "pending",
+            "testStrategy": "Test probability distribution accuracy across large sample sizes. Verify validation prevents invalid configurations. Test edge cases like single prize scenarios and equal probability distributions.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Unique Code Generation and Inventory Management",
+            "description": "Build system for generating, importing, and managing unique prize codes with inventory tracking",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement unique code generation algorithm with configurable patterns and validation. Create bulk import functionality for pre-generated codes with validation and duplicate detection. Build inventory management system that tracks available/used codes with quantity limits per prize. Add code reservation system to prevent double-assignment during concurrent operations. Implement code status tracking (available, reserved, issued, expired) with proper timestamps.",
+            "status": "pending",
+            "testStrategy": "Test code uniqueness across large batches. Verify import validation catches duplicates. Test inventory limits are enforced correctly. Validate code reservation system under load.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Concurrent Prize Assignment with Locking Mechanisms",
+            "description": "Implement thread-safe prize assignment logic with proper locking to prevent duplicate issuance",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design database transaction model with row-level locking for prize assignment. Implement optimistic concurrency control with version tracking for high-volume scenarios. Create a distributed lock manager for cross-server synchronization using Redis or similar technology. Build prize assignment queue with idempotency keys to prevent duplicate processing. Implement comprehensive logging of all prize assignment attempts, successes, and failures with proper error handling.",
+            "status": "pending",
+            "testStrategy": "Test concurrent prize assignment under high load. Verify no duplicate prizes are issued. Test recovery from failed assignments. Validate locking mechanisms prevent race conditions.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Prize Delivery and Analytics Implementation",
+            "description": "Build prize delivery mechanisms and comprehensive analytics for tracking and reporting",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement on-screen prize notification system with customizable templates. Create optional email delivery system integrated with existing email providers. Build webhook notifications for prize awards to external systems. Implement comprehensive analytics dashboard showing prize distribution, win rates, and inventory levels. Create reporting system for prize issuance with filtering and export capabilities. Add support for consolation messages for non-winners with customizable content.",
+            "status": "pending",
+            "testStrategy": "Test all delivery mechanisms (screen, email, webhooks). Verify analytics accurately reflect prize distribution. Test consolation message delivery. Validate reporting system produces correct data.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the prize engine and reward system into subtasks for: (1) prize configuration and probability management, (2) unique code generation and inventory system, (3) concurrent prize assignment with proper locking mechanisms, and (4) prize delivery and analytics implementation.",
+        "updatedAt": "2026-02-06T00:44:02.004Z"
+      },
+      {
+        "id": "9",
+        "title": "Form Capture & Data Collection",
+        "description": "Build comprehensive form system for lead capture with GDPR compliance and custom field support",
+        "details": "Create dynamic form builder with email/SMS fields and custom field types (text, dropdown, multi-select). Implement GDPR-compliant consent checkbox system. Build form validation and submission handling. Create data storage system for submissions with proper workspace scoping. Implement field mapping for integrations. Add double opt-in support preparation. Create form analytics and conversion tracking. Ensure proper data encryption and privacy compliance.",
+        "testStrategy": "Test form validation, verify GDPR compliance features, test custom field functionality, validate data storage and retrieval, test field mapping accuracy",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Dynamic Form Builder with Custom Field Types",
+            "description": "Develop a flexible form builder interface that supports various field types including text, dropdown, multi-select, email, and SMS fields.",
+            "dependencies": [],
+            "details": "Create a React component for the form builder with drag-and-drop functionality. Implement field type definitions and configurations for text, dropdown, multi-select, email, and SMS fields. Build the UI for configuring field properties, validation rules, and appearance. Create a form preview functionality to test the form during configuration. Ensure the form builder saves configurations in a structured JSON format for rendering.",
+            "status": "pending",
+            "testStrategy": "Unit test each field type component, test drag-and-drop functionality, verify form configuration persistence, test form preview rendering, and validate JSON schema output.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "GDPR-Compliant Consent System and Privacy Controls",
+            "description": "Implement a comprehensive consent management system that ensures GDPR compliance with proper data handling and privacy controls.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create configurable consent checkbox components with customizable text. Implement required vs. optional consent options. Build consent record storage with timestamp and version tracking. Add double opt-in email verification flow. Implement data retention policies and automatic data purging. Create privacy preference center for users to manage their consent. Ensure proper data encryption for sensitive information. Add consent withdrawal functionality.",
+            "status": "pending",
+            "testStrategy": "Verify consent records are properly stored with timestamps, test double opt-in flows, validate encryption of sensitive data, test consent withdrawal process, and ensure compliance with GDPR requirements.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Form Validation, Submission Handling and Data Storage",
+            "description": "Build robust form validation, submission processing, and secure data storage system with proper workspace scoping.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement client-side validation for all field types with custom validation rules. Create server-side validation as a security measure. Build submission handling API with rate limiting and spam protection. Develop data storage schema in the database with proper indexing. Implement workspace scoping for all form submissions. Create error handling and user feedback system. Add submission logging for audit purposes. Implement data encryption for sensitive fields. Create data export functionality in various formats (CSV, JSON).",
+            "status": "pending",
+            "testStrategy": "Test validation rules for all field types, verify submission handling under load, test workspace isolation of data, validate encryption of sensitive data, and test data export functionality.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Integration Field Mapping and Analytics Implementation",
+            "description": "Develop field mapping system for third-party integrations and implement comprehensive form analytics and conversion tracking.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create field mapping interface to connect form fields with integration endpoints (Klaviyo, HubSpot, webhooks). Implement data transformation for different integration requirements. Build analytics dashboard showing form views, submission rates, and field completion metrics. Add conversion tracking with UTM parameter support. Implement A/B testing capability for form variants. Create performance reports with exportable data. Add real-time submission notifications. Build integration with the prize engine for reward distribution based on form completion.",
+            "status": "pending",
+            "testStrategy": "Test field mapping accuracy for each integration type, verify analytics data collection and reporting, validate conversion tracking with various attribution models, and test A/B testing functionality.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the form capture and data collection system into subtasks for: (1) dynamic form builder with custom field types, (2) GDPR-compliant consent system and privacy controls, (3) form validation, submission handling and data storage, and (4) integration field mapping and analytics implementation.",
+        "updatedAt": "2026-02-06T07:46:43.161Z"
+      },
+      {
+        "id": "10",
+        "title": "Integration System - Webhooks & Native Connectors",
+        "description": "Build integration framework with webhook support and native Klaviyo/HubSpot connectors",
+        "details": "Create integration management system with credential encryption. Build webhook integration with retry logic and failure handling. Implement native Klaviyo connector with OAuth flow and API operations (create/update contact, add tags, send events). Build HubSpot connector with similar functionality. Create integration job queue and logging system. Implement idempotency for repeated sync events. Add integration testing and validation tools. Create integration analytics and monitoring.",
+        "testStrategy": "Test webhook delivery and retry logic, verify OAuth flows for native integrations, test data synchronization accuracy, validate error handling and logging, test idempotency mechanisms",
+        "priority": "medium",
+        "dependencies": [
+          "1",
+          "7",
+          "9"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integration Management Framework with Credential Encryption",
+            "description": "Build a secure integration management system that handles credential storage with encryption and provides a unified interface for all integration types.",
+            "dependencies": [],
+            "details": "Create database schema for `integrations` table with encrypted credential storage using a strong encryption algorithm (AES-256). Implement integration configuration UI with secure credential input. Build integration type registry system to support multiple integration types (webhooks, Klaviyo, HubSpot). Create integration activation/deactivation functionality and integration status monitoring. Implement permission controls for integration management.",
+            "status": "pending",
+            "testStrategy": "Test encryption/decryption of credentials, verify secure storage in database, test integration configuration UI, validate permission controls, ensure credentials are never exposed in logs or responses.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Webhook Integration with Retry Logic and Failure Handling",
+            "description": "Implement a robust webhook delivery system with configurable endpoints, payload mapping, retry logic, and comprehensive failure handling.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create webhook configuration interface for URL, headers, and payload mapping. Implement webhook delivery service with HTTP request handling. Build retry mechanism with exponential backoff for failed deliveries. Create `integration_jobs` table to track webhook delivery attempts and status. Implement webhook testing tool for validation. Add webhook signature for security verification. Create detailed logging for webhook events and failures. Implement idempotency keys to prevent duplicate processing.",
+            "status": "pending",
+            "testStrategy": "Test webhook delivery to mock endpoints, verify retry logic with intentionally failing endpoints, validate payload mapping accuracy, test concurrency handling, verify idempotency mechanism prevents duplicates.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Native Klaviyo Connector with OAuth Flow",
+            "description": "Build a native Klaviyo integration with OAuth authentication flow and support for key Klaviyo operations like contact management and event tracking.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement Klaviyo OAuth flow for secure API access. Create Klaviyo API client with rate limiting support. Build operations for creating/updating contacts, adding tags, and sending custom events to Klaviyo. Implement profile merging for existing contacts. Create data mapping interface for field customization. Add support for Klaviyo lists and segments. Implement error handling specific to Klaviyo API responses. Create Klaviyo integration testing tools and validation.",
+            "status": "pending",
+            "testStrategy": "Test OAuth authentication flow, verify contact creation and updates, test event tracking accuracy, validate error handling for API rate limits, test field mapping functionality.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "HubSpot Connector with Data Synchronization",
+            "description": "Implement a native HubSpot connector with OAuth authentication, contact synchronization, and custom property mapping for bidirectional data flow.",
+            "dependencies": [
+              1
+            ],
+            "details": "Build HubSpot OAuth implementation for API authentication. Create HubSpot API client with rate limit handling. Implement contact creation/update operations with custom property mapping. Add support for HubSpot lists and workflows. Build event tracking integration for campaign interactions. Implement bidirectional sync capabilities for selected data. Create HubSpot-specific error handling and logging. Add integration analytics for sync operations. Implement webhook listener for HubSpot events.",
+            "status": "pending",
+            "testStrategy": "Test HubSpot OAuth flow, verify contact synchronization accuracy, validate custom property mapping, test bidirectional sync functionality, verify error handling and recovery mechanisms.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the integration system into subtasks for: (1) integration management framework with credential encryption, (2) webhook integration with retry logic and failure handling, (3) native Klaviyo connector implementation with OAuth flow, and (4) HubSpot connector implementation with data synchronization.",
+        "updatedAt": "2026-02-06T07:47:30.289Z"
+      },
+      {
+        "id": "11",
+        "title": "Analytics Dashboard & Reporting",
+        "description": "Build comprehensive analytics dashboard with real-time metrics and campaign performance tracking",
+        "details": "Create analytics dashboard with key metrics: impressions, opens, plays, completions, submissions, conversion rates. Implement funnel visualization and breakdown by campaign version. Build PostHog integration for advanced analytics. Create real-time data updates with WebSocket or polling. Implement prize claim tracking and inventory monitoring. Add campaign comparison tools. Create basic export functionality (CSV). Build performance monitoring for campaigns and system health.",
+        "testStrategy": "Test metric accuracy against raw events, verify real-time updates, test export functionality, validate funnel calculations, test dashboard performance with large datasets",
+        "priority": "medium",
+        "dependencies": [
+          "7",
+          "8"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Core Dashboard UI with Key Metrics Visualization",
+            "description": "Develop the main analytics dashboard UI with visualizations for key performance metrics including impressions, opens, plays, completions, submissions, and conversion rates.",
+            "dependencies": [],
+            "details": "Create responsive dashboard layout using shadcn/ui components. Implement charts and graphs for key metrics using a visualization library like Chart.js or Recharts. Design metric cards for KPIs with appropriate visual indicators for trends. Build filtering system by date range, campaign, and version. Integrate with the events_agg_daily table for data retrieval. Ensure proper loading states and error handling for data fetching.",
+            "status": "pending",
+            "testStrategy": "Test dashboard rendering with various screen sizes, verify metric calculations against raw data, test filtering functionality, ensure accessibility compliance, validate loading states and error handling.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Real-time Data Updates Implementation",
+            "description": "Implement real-time or near real-time updates for dashboard metrics using WebSocket connections or efficient polling mechanisms.",
+            "dependencies": [
+              1
+            ],
+            "details": "Evaluate and implement either WebSocket connections or efficient polling strategy based on performance requirements. Create a data synchronization layer to handle real-time updates. Implement optimistic UI updates to improve perceived performance. Add visual indicators for data freshness. Build throttling mechanisms to prevent excessive server load. Ensure graceful degradation if real-time connection is lost. Implement reconnection logic with exponential backoff.",
+            "status": "pending",
+            "testStrategy": "Test update frequency and accuracy, measure performance impact of real-time updates, test reconnection scenarios, verify data consistency between real-time updates and full refreshes.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Funnel Visualization and Campaign Comparison Tools",
+            "description": "Create interactive funnel visualizations to track user journey and implement tools for comparing performance across different campaign versions.",
+            "dependencies": [
+              1
+            ],
+            "details": "Design and implement funnel visualization component showing conversion between stages (impressions → opens → plays → completions → submissions). Calculate and display conversion rates between each funnel stage. Build campaign comparison interface allowing side-by-side metrics analysis. Implement version comparison with statistical significance indicators. Create breakdown views by demographic data if available. Add hover states with detailed metrics for each funnel stage. Integrate with PostHog for advanced funnel analytics.",
+            "status": "pending",
+            "testStrategy": "Validate funnel calculations against raw event data, test comparison functionality with multiple campaign versions, verify statistical calculations, test interactive elements of the visualization.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Export Functionality and Performance Monitoring",
+            "description": "Implement data export capabilities for dashboard metrics and build performance monitoring tools for campaign and system health tracking.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Create CSV export functionality for all dashboard metrics and reports. Implement scheduled report generation and delivery via email. Build system health monitoring dashboard showing API response times, error rates, and resource utilization. Implement campaign performance alerts for significant metric changes. Create inventory monitoring for prizes with low stock warnings. Add performance benchmarking against historical data. Ensure exports include proper headers and formatting for data analysis.",
+            "status": "pending",
+            "testStrategy": "Test CSV export format and data accuracy, verify email delivery of scheduled reports, validate alert triggering conditions, test performance monitoring accuracy, ensure exports work with large datasets.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the analytics dashboard and reporting system into subtasks for: (1) core dashboard UI with key metrics visualization, (2) real-time data updates with WebSocket or polling, (3) funnel visualization and campaign comparison tools, and (4) export functionality and performance monitoring implementation.",
+        "updatedAt": "2026-02-06T00:51:20.651Z"
+      },
+      {
+        "id": "12",
+        "title": "Game Templates & Asset Management",
+        "description": "Implement game template library with spin-to-win, scratchcard, quiz, and poll/survey games",
+        "details": "Build game template system with configurable spin-to-win wheel (customizable segments, colors, prizes). Create scratchcard game with scratch-off animation and reveal mechanics. Implement quiz system with linear question flow and scoring. Build poll/survey functionality with multiple question types. Create asset management system for images, audio, and game resources. Implement responsive game rendering for mobile and desktop. Add game customization options (branding, colors, fonts). Create game preview and testing tools.",
+        "testStrategy": "Test game functionality across devices and browsers, verify customization options work correctly, test asset loading and caching, validate game logic and scoring, test responsive design",
+        "priority": "medium",
+        "dependencies": [
+          "5",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Spin-to-Win and Scratchcard Game Templates",
+            "description": "Develop the core functionality for the spin-to-win wheel and scratchcard game templates with configurable options and animations.",
+            "dependencies": [],
+            "details": "For spin-to-win: Create a configurable wheel component with customizable segments, colors, and prize mapping. Implement spinning animation with physics-based deceleration and prize selection logic. For scratchcard: Develop scratch-off mechanics using canvas or WebGL with reveal animations, configurable card designs, and prize reveal logic. Ensure both games handle win/lose states appropriately and integrate with the prize engine (Task 19).",
+            "status": "pending",
+            "testStrategy": "Test wheel spinning mechanics across different browsers and devices. Verify scratchcard reveal works on both touch and mouse interactions. Test edge cases like rapid interaction and interrupted animations. Validate prize selection logic matches configured probabilities.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Quiz and Poll/Survey Game Templates",
+            "description": "Create interactive quiz and poll/survey game templates with question flow, scoring, and data collection capabilities.",
+            "dependencies": [],
+            "details": "For quiz games: Implement a question flow system with configurable question types (multiple choice, true/false), scoring logic, and results display. For polls/surveys: Create a system supporting multiple question types (rating scales, multiple choice, open text), branching logic based on responses, and data aggregation. Both templates should include progress indicators, time limits option, and completion screens. Ensure responsive design for all question types and interaction patterns.",
+            "status": "pending",
+            "testStrategy": "Test question flow and scoring accuracy. Verify branching logic works correctly in polls. Test data collection and submission. Validate accessibility of question interfaces. Test on various screen sizes to ensure responsive behavior.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Asset Management System",
+            "description": "Develop a comprehensive asset management system for handling game-related media and resources across all game templates.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create a unified asset management system that handles uploading, storing, and serving images, audio files, and other game resources. Implement asset categorization, tagging, and search functionality. Build a media library UI for browsing and selecting assets during game configuration. Implement asset optimization for different devices (responsive images, audio compression). Add caching mechanisms for improved performance. Ensure proper validation of uploaded assets (file types, sizes, dimensions).",
+            "status": "pending",
+            "testStrategy": "Test asset upload/download performance. Verify optimization for different devices. Test cache invalidation when assets are updated. Validate asset loading in games under various network conditions. Test file type restrictions and size limits.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Game Customization, Preview and Testing Tools",
+            "description": "Create tools for customizing game appearance, previewing games during configuration, and testing game functionality before deployment.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Build a game customization interface for configuring branding elements (logos, colors, fonts, themes). Implement a live preview system that renders games with current configuration during the editing process. Create a game testing mode that simulates different outcomes and scenarios (wins, losses, different prizes) without affecting production data. Develop a responsive design testing tool to preview games at different screen sizes. Add configuration validation to prevent common setup errors.",
+            "status": "pending",
+            "testStrategy": "Test customization options across all game types. Verify preview accuracy matches final deployed games. Test the testing mode for all game scenarios. Validate responsive previews match actual device rendering. Test configuration validation catches common errors.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the game templates and asset management system into subtasks for: (1) spin-to-win and scratchcard game implementations, (2) quiz and poll/survey game implementations, (3) asset management system for images, audio, and resources, and (4) game customization, preview and testing tools.",
+        "updatedAt": "2026-02-06T00:51:22.466Z"
+      },
+      {
+        "id": "13",
+        "title": "Set up data model and Prisma",
+        "description": "Create the necessary database tables and models using Prisma, including workspaces, campaigns, versions, prizes, submissions, and integrations.",
+        "details": "1. Define the Prisma schema with the following tables:\n- `workspaces`\n- `users`\n- `workspace_members` (for RBAC)\n- `campaigns` (metadata)\n- `campaign_versions` (immutable configs + published pointer)\n- `assets` (images, audio, etc.)\n- `prizes` + `prize_codes`\n- `submissions` (form/quiz answers)\n- `events_raw` (or event stream storage strategy)\n- `events_agg_daily` (or equivalent aggregates)\n- `integrations` (credentials + settings)\n- `integration_jobs` (sync logs + retries)\n2. Generate the Prisma client and set up the database connection.",
+        "testStrategy": "Verify that the Prisma schema matches the requirements, and that all tables can be created and queried correctly.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Core Entity Tables in Prisma Schema",
+            "description": "Create the foundational data models for workspaces, users, and campaign management in the Prisma schema.",
+            "dependencies": [],
+            "details": "Implement the following tables with proper relationships and indexes: `workspaces` (with tenant isolation fields), `users` (with authentication fields), `workspace_members` (with RBAC roles and permissions), `campaigns` (with metadata and status fields), `campaign_versions` (with immutable configuration and published pointer), and `assets` (for storing images, audio, etc.). Ensure proper foreign key relationships between these core entities and add appropriate indexes for query performance. Include created_at/updated_at timestamps on all tables.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify model definitions, test foreign key constraints, and validate workspace isolation by attempting cross-workspace data access. Test CRUD operations on each table.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Operational Tables for Prizes and Submissions",
+            "description": "Create the Prisma schema for prize management, submission tracking, and event storage.",
+            "dependencies": [
+              1
+            ],
+            "details": "Define the following tables with appropriate relationships to core entities: `prizes` (with configuration, probability settings, and inventory tracking), `prize_codes` (with unique code storage and redemption tracking), `submissions` (for storing form/quiz answers with JSON fields for flexible data), `events_raw` (for storing raw event stream data with proper partitioning strategy), and `events_agg_daily` (for aggregated metrics and analytics). Ensure all tables have workspace_id for tenant isolation and implement appropriate indexes for query performance.",
+            "status": "pending",
+            "testStrategy": "Test prize allocation logic, verify submission storage and retrieval, test event aggregation queries, and validate tenant isolation across all operational tables.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Integration and Analytics Tables with Indexing",
+            "description": "Implement the Prisma schema for third-party integrations, job tracking, and analytics support.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Define the following tables with proper relationships and indexes: `integrations` (for storing API credentials, connection settings, and provider metadata), `integration_jobs` (for tracking sync operations, status, logs, and retry information). Add appropriate indexes on all tables to support efficient querying patterns for analytics. Implement database views or materialized views if needed for common analytics queries. Generate the Prisma client and set up the database connection with proper connection pooling and error handling.",
+            "status": "pending",
+            "testStrategy": "Test integration credential storage and encryption, verify job tracking and retry logic, benchmark query performance with indexes, and validate overall database connection configuration.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the data model and Prisma setup into subtasks for: (1) core entity tables (workspaces, users, campaigns), (2) operational tables (prizes, submissions, events), and (3) integration and analytics tables with proper indexing and relationships.",
+        "updatedAt": "2026-02-06T00:37:51.321Z"
+      },
+      {
+        "id": "14",
+        "title": "Implement authentication and RBAC middleware",
+        "description": "Build the authentication and role-based access control (RBAC) system to manage user and workspace permissions.",
+        "details": "1. Integrate Clerk (or Auth0) for user authentication and management.\n2. Create the `workspaces` and `workspace_members` tables to store workspace and user permissions.\n3. Implement middleware to enforce workspace-scoped access control on all API endpoints.\n4. Ensure that all actions (create, read, update, delete) on core resources (campaigns, prizes, submissions, etc.) are restricted based on user roles.",
+        "testStrategy": "Verify that users can only perform actions allowed by their assigned roles, and that workspace isolation is enforced across all endpoints.",
+        "priority": "high",
+        "dependencies": [
+          "13"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Integrate Clerk/Auth0 for User Authentication",
+            "description": "Set up and integrate the chosen authentication provider (Clerk or Auth0) to handle user authentication and management.",
+            "dependencies": [],
+            "details": "1. Create account and configure the chosen auth provider (Clerk or Auth0)\n2. Implement authentication flow including sign-up, login, and session management\n3. Set up JWT validation and user profile retrieval\n4. Create auth middleware to validate tokens on protected routes\n5. Implement refresh token logic and session expiration handling\n6. Add logout functionality and token invalidation",
+            "status": "pending",
+            "testStrategy": "Test user registration, login flows, token validation, session persistence, and error handling for invalid credentials. Verify proper token refresh and session timeout behavior.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Workspace-Scoped Access Control Middleware",
+            "description": "Create middleware to enforce workspace isolation and ensure users can only access resources within workspaces they belong to.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Create database schema for `workspaces` and `workspace_members` tables\n2. Implement middleware to extract workspace context from requests\n3. Add workspace membership validation to ensure users can only access their authorized workspaces\n4. Create workspace invitation and member management functionality\n5. Implement workspace-scoped database queries to filter all resources by workspace ID\n6. Add workspace switching functionality in the authentication flow",
+            "status": "pending",
+            "testStrategy": "Verify users can only access resources within their authorized workspaces. Test workspace isolation by attempting cross-workspace access. Test workspace invitation and membership management flows.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Develop Role-Based Permission System for Resources",
+            "description": "Implement a role-based access control system to restrict actions on different resource types based on user roles within a workspace.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "1. Define role hierarchy (e.g., admin, editor, viewer) and permission matrix for each resource type\n2. Create permission checking middleware for CRUD operations on campaigns, prizes, submissions, etc.\n3. Implement role assignment and management within workspaces\n4. Add permission validation to all API endpoints\n5. Create helper functions to check permissions programmatically\n6. Implement audit logging for permission-related actions\n7. Add UI components to reflect available actions based on user permissions",
+            "status": "pending",
+            "testStrategy": "Test that users with different roles can only perform authorized actions on resources. Verify permission inheritance and role changes are immediately reflected in access control. Test edge cases like permission conflicts.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the authentication and RBAC middleware implementation into subtasks for: (1) Clerk/Auth0 integration for user authentication, (2) workspace-scoped access control middleware, and (3) role-based permission system for different resource types.",
+        "updatedAt": "2026-02-06T00:37:53.066Z"
+      },
+      {
+        "id": "15",
+        "title": "Define the campaign configuration schema",
+        "description": "Create a Zod-based schema to validate the structure and content of campaign configurations.",
+        "details": "1. Define the core abstraction of a campaign as a 'Flow' composed of 'Blocks'.\n2. Create Zod schemas for the different block types (Trigger, Popup Container, Game, Form, Outcome, Integration Action).\n3. Ensure the schema supports versioning and immutable campaign configurations.\n4. Implement validation logic to ensure all campaign configurations are valid before persistence or publication.",
+        "testStrategy": "Test the schema with a variety of valid and invalid campaign configurations to ensure it enforces the required structure and constraints.",
+        "priority": "high",
+        "dependencies": [
+          "13"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Core Flow and Block Type Schemas with Zod",
+            "description": "Create the foundational Zod schemas that define the core campaign structure as a Flow composed of different Block types.",
+            "dependencies": [],
+            "details": "Implement Zod schemas for the core Flow abstraction and all Block types (Trigger, Popup Container, Game, Form, Outcome, Integration Action). Define the base properties common to all blocks (id, type, etc.) and the specific properties for each block type. Ensure proper typing and validation rules for all properties. Create TypeScript interfaces that match the Zod schemas for developer usage.",
+            "status": "pending",
+            "testStrategy": "Write unit tests with valid and invalid configurations for each block type. Test edge cases like missing required fields and invalid property values.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Validation Logic for Block Relationships and Configuration Integrity",
+            "description": "Develop validation rules to ensure the integrity of relationships between blocks and the overall campaign configuration structure.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create validation functions that verify block references are valid (no circular dependencies, no missing references). Implement rules to validate that required blocks exist (e.g., every flow needs at least one trigger). Add validation for block-specific constraints (e.g., form blocks must have at least one input field). Develop a comprehensive validation pipeline that can be used before saving or publishing campaigns.",
+            "status": "pending",
+            "testStrategy": "Test with complex campaign configurations to verify relationship validation. Create test cases for common error scenarios like circular references or invalid block combinations.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Design Versioning Support and Schema Evolution Strategy",
+            "description": "Implement a versioning system for campaign configurations and develop a strategy for schema evolution over time.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Add version metadata to the campaign configuration schema. Implement immutability guarantees for published campaign versions. Create migration utilities to update older campaign configurations to newer schema versions. Design a strategy for backward compatibility when the schema evolves. Document the versioning approach and provide examples of how to handle schema changes.",
+            "status": "pending",
+            "testStrategy": "Test version migration between different schema versions. Verify that published campaigns remain immutable. Test loading and running campaigns created with older schema versions.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the campaign configuration schema definition into subtasks for: (1) core Flow and Block type definitions with Zod, (2) validation logic for different block types and their relationships, and (3) versioning support and schema evolution strategy.",
+        "updatedAt": "2026-02-06T00:37:54.794Z"
+      },
+      {
+        "id": "16",
+        "title": "Implement the basic Campaign Studio UI",
+        "description": "Build the user interface for creating and editing campaigns using the defined configuration schema.",
+        "details": "1. Create a Next.js-based admin UI with a React-based drag-and-drop builder.\n2. Integrate the Zod-based campaign configuration schema to power the builder.\n3. Implement functionality to select templates, customize branding, and preview the campaign.\n4. Ensure the UI adheres to the defined security and accessibility requirements.",
+        "testStrategy": "Verify that users can create and edit campaigns without introducing invalid configurations, and that the preview matches the published experience.",
+        "priority": "high",
+        "dependencies": [
+          "13",
+          "14",
+          "15"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Next.js admin UI with React component library",
+            "description": "Create the foundation for the Campaign Studio UI using Next.js and implement core React components needed for the admin interface.",
+            "dependencies": [],
+            "details": "Initialize a Next.js project with TypeScript support. Set up the project structure following best practices with pages, components, and services directories. Implement core UI components including navigation, layout, forms, buttons, and modals. Establish design system integration with either Tailwind CSS or a component library like Chakra UI. Create the authentication flow integration with Clerk/Auth0 from Task 14. Implement workspace-aware routing and navigation.",
+            "status": "pending",
+            "testStrategy": "Unit test core components with React Testing Library. Implement Storybook for component documentation and visual testing. Verify authentication flow works correctly with mocked auth providers.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement drag-and-drop builder with schema validation",
+            "description": "Build the interactive drag-and-drop campaign builder that enforces the Zod schema constraints from Task 3.",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate a React drag-and-drop library (react-dnd or react-beautiful-dnd). Create block components for each type defined in the campaign schema (TriggerBlock, ContainerBlock, GameBlock, FormBlock, OutcomeBlock, CTAActionBlock, IntegrationActionBlock). Implement the canvas area where blocks can be arranged. Add functionality to connect blocks to create flows. Integrate real-time validation using the Zod schema to prevent invalid configurations. Implement undo/redo functionality and autosave. Create property panels for configuring each block type.",
+            "status": "pending",
+            "testStrategy": "Test drag-and-drop interactions with simulated user events. Verify schema validation prevents invalid configurations. Test undo/redo and autosave functionality.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Develop template selection and branding customization",
+            "description": "Create the UI for selecting campaign templates and customizing branding elements within the Campaign Studio.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement a template gallery with filtering and search capabilities. Create template preview cards with thumbnails and descriptions. Build the template selection and import workflow. Develop branding customization panels for colors, typography, and imagery. Implement a theme editor with live preview. Create functionality to save and reuse branding presets across campaigns. Add image upload and management for custom assets. Ensure all customizations are validated against the schema.",
+            "status": "pending",
+            "testStrategy": "Test template selection and application process. Verify branding changes are correctly applied and saved. Test image upload and management functionality. Ensure theme presets can be saved and reapplied.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build campaign preview and publishing workflow",
+            "description": "Implement the functionality to preview campaigns in different states and manage the publishing workflow.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Create a live preview mode that renders the campaign as it would appear to end users. Implement device-specific previews (mobile, tablet, desktop). Build the publishing workflow with draft, review, and published states. Create versioning UI to view and restore previous campaign versions. Implement validation checks before publishing to ensure campaign integrity. Add functionality to schedule campaign start and end dates. Create publishing confirmation dialogs with validation summaries. Implement campaign status indicators throughout the UI.",
+            "status": "pending",
+            "testStrategy": "Test preview rendering across different device sizes. Verify publishing workflow correctly transitions campaign states. Test versioning and restoration of previous versions. Ensure scheduled campaigns activate and deactivate at the correct times.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the Campaign Studio UI implementation into subtasks for: (1) Next.js admin UI setup with React components, (2) drag-and-drop builder integration with schema validation, (3) template selection and branding customization, and (4) campaign preview and publishing workflow.",
+        "updatedAt": "2026-02-06T00:37:56.554Z"
+      },
+      {
+        "id": "17",
+        "title": "Develop the customer-facing snippet",
+        "description": "Build the JavaScript snippet that customers will embed on their websites to render the gamified experiences.",
+        "details": "1. Design the snippet to be less than 50KB gzipped and asynchronously loaded.\n2. Implement logic to fetch the campaign configuration for the current page/context.\n3. Render the popup/embedded experience based on the configuration.\n4. Handle trigger events (time, scroll, exit intent, click) and batch/retry event submissions.\n5. Ensure the snippet supports versioned URLs for safe rollouts.",
+        "testStrategy": "Test the snippet across major browsers and devices to ensure it meets the performance and functionality requirements. Verify that events are correctly batched and retried.",
+        "priority": "high",
+        "dependencies": [
+          "13",
+          "15"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Develop core snippet architecture with asynchronous loading",
+            "description": "Create the foundation of the JavaScript snippet with asynchronous loading capabilities to ensure minimal impact on page load times.",
+            "dependencies": [],
+            "details": "Design a lightweight architecture (<50KB gzipped) with module structure. Implement asynchronous loading pattern using non-blocking techniques. Create versioned URL support for safe rollouts. Set up build pipeline with minification, tree-shaking, and gzip compression. Ensure compatibility with various hosting environments and CSP configurations.",
+            "status": "pending",
+            "testStrategy": "Test loading performance across browsers. Measure gzipped size to ensure it's under 50KB. Verify asynchronous loading doesn't block page rendering. Test versioned URL functionality with multiple versions.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement campaign configuration fetching and rendering",
+            "description": "Build the functionality to fetch campaign configurations from the server and render the appropriate gamified experience based on the configuration.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create API client to fetch campaign configuration based on site context (URL, user data). Implement caching mechanism for configurations to reduce API calls. Build renderer components for different campaign types (popup, embedded). Handle configuration versioning and backward compatibility. Implement error handling for failed configuration fetches.",
+            "status": "pending",
+            "testStrategy": "Test configuration fetching with various campaign types. Verify correct rendering based on configuration. Test caching behavior and expiration. Validate error handling for network issues and invalid configurations.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Develop trigger event handling and popup display",
+            "description": "Implement the logic to detect various trigger events (time, scroll, exit intent, click) and display the appropriate popup or embedded experience.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create event listeners for time-based triggers (delay, inactivity). Implement scroll depth detection for scroll-based triggers. Build exit intent detection using mouse movement tracking. Add click event delegation for click-based triggers. Develop popup/modal system with animation and positioning options. Ensure proper z-index management and focus trapping for accessibility.",
+            "status": "pending",
+            "testStrategy": "Test each trigger type individually and in combination. Verify correct timing of popups. Test scroll depth calculation accuracy. Validate exit intent detection across browsers. Ensure popups display correctly on mobile and desktop devices.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Build event tracking with batching and retry logic",
+            "description": "Implement the system to track user interactions with the gamified experiences, batch events for efficiency, and retry failed submissions.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create event tracking module to capture user interactions (views, clicks, game plays, form submissions). Implement batching logic to group events and reduce API calls. Build retry mechanism with exponential backoff for failed submissions. Add offline support using localStorage for event persistence. Implement session and user identification for analytics. Ensure proper error handling and logging for debugging.",
+            "status": "pending",
+            "testStrategy": "Test event capturing accuracy. Verify batching behavior with various event volumes. Test retry logic by simulating network failures. Validate offline functionality by disconnecting network. Ensure events are properly attributed to users and sessions.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the customer-facing snippet development into subtasks for: (1) core snippet architecture with asynchronous loading, (2) campaign configuration fetching and rendering, (3) trigger event handling and popup display, and (4) event tracking with batching and retry logic.",
+        "updatedAt": "2026-02-06T07:46:45.012Z"
+      },
+      {
+        "id": "18",
+        "title": "Implement the event ingestion pipeline",
+        "description": "Build the infrastructure to ingest, queue, and process all runtime events generated by the customer-facing snippet.",
+        "details": "1. Create an ingestion endpoint (Cloudflare Worker or lightweight Node service) to receive batched events.\n2. Validate the event schema and attach workspace, campaign, and session metadata.\n3. Push the events to a queue (Upstash Redis or AWS SQS) for asynchronous processing.\n4. Implement worker processes (BullMQ or Trigger.dev) to consume the queue and perform aggregations, trigger checks, integration syncs, and prize inventory enforcement.",
+        "testStrategy": "Verify that events are correctly ingested, queued, and processed, and that the aggregated metrics match the expected behavior.",
+        "priority": "high",
+        "dependencies": [
+          "13",
+          "17"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Cloudflare Worker for event ingestion endpoint",
+            "description": "Develop a Cloudflare Worker that serves as the entry point for all runtime events generated by the customer-facing snippet.",
+            "dependencies": [],
+            "details": "Implement a Cloudflare Worker that can receive batched events via HTTP POST requests. The worker should handle high throughput, implement rate limiting, and provide basic authentication. It should also include error handling and logging for monitoring purposes. The worker should be deployed to multiple regions for global availability.",
+            "status": "pending",
+            "testStrategy": "Create unit tests for the worker logic. Set up integration tests that simulate event batches of various sizes. Perform load testing to ensure the worker can handle expected traffic volumes. Verify proper error handling for malformed requests.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement event validation and metadata enrichment",
+            "description": "Create a system to validate incoming event schemas and attach workspace, campaign, and session metadata to each event.",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop Zod schemas for validating different event types. Implement logic to reject malformed events. Create a service to look up and attach workspace metadata, campaign information, and session context to each validated event. Include timestamp normalization and client IP anonymization. Implement logging for validation failures for debugging purposes.",
+            "status": "pending",
+            "testStrategy": "Unit test all validation schemas with valid and invalid payloads. Test metadata enrichment with mock workspace and campaign data. Verify proper handling of edge cases like missing session data or unknown campaign IDs.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Set up Upstash Redis queue for event processing",
+            "description": "Configure and implement an Upstash Redis-based queuing system to store validated events for asynchronous processing.",
+            "dependencies": [
+              2
+            ],
+            "details": "Set up Upstash Redis instance with appropriate configuration for durability and performance. Implement queue producer logic in the ingestion service to reliably push events to the queue. Configure appropriate TTL and retry mechanisms. Implement monitoring and alerting for queue depth and processing delays. Create a dead-letter queue for events that fail processing repeatedly.",
+            "status": "pending",
+            "testStrategy": "Test queue operations with various event volumes. Verify data persistence across Redis instance restarts. Test backpressure handling when queue depth increases. Simulate network failures to verify retry logic works correctly.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement worker processes for event consumption and processing",
+            "description": "Develop worker processes using BullMQ to consume events from the queue and perform necessary processing operations.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create BullMQ worker processes that consume events from the Redis queue. Implement handlers for different event types to perform aggregations, trigger checks, integration syncs, and prize inventory enforcement. Set up concurrency controls to optimize throughput. Implement error handling with exponential backoff for transient failures. Create monitoring dashboards to track processing throughput and error rates.",
+            "status": "pending",
+            "testStrategy": "Unit test individual event processors. Create integration tests for the complete flow from queue to processed output. Test failure scenarios and recovery. Verify that aggregated metrics match expected values for sample event streams.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the event ingestion pipeline implementation into subtasks for: (1) ingestion endpoint creation with Cloudflare Worker, (2) event validation and workspace metadata attachment, (3) queue setup with Upstash Redis or AWS SQS, and (4) worker processes for event consumption and processing.",
+        "updatedAt": "2026-02-06T07:46:47.045Z"
+      },
+      {
+        "id": "19",
+        "title": "Implement the prize engine",
+        "description": "Build the system to define, issue, and manage prizes for gamified experiences.",
+        "details": "1. Create the `prizes` and `prize_codes` tables to store prize definitions and issued codes.\n2. Implement logic to configure prize odds, quantities, and types (coupon codes, static or unique).\n3. Ensure the prize engine logs all issuances and enforces inventory limits to prevent over-issuing.\n4. Integrate the prize engine with the event pipeline to handle prize award events.",
+        "testStrategy": "Verify that prizes are correctly configured, issued, and that the inventory is properly managed. Test edge cases like exhausting the prize pool.",
+        "priority": "high",
+        "dependencies": [
+          "13",
+          "17",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement prize configuration and inventory management",
+            "description": "Create database tables and logic for defining prizes and managing their inventory",
+            "dependencies": [],
+            "details": "1. Design and implement the `prizes` table with fields for name, description, type (coupon/physical/digital), total quantity, remaining quantity, odds, and active status.\n2. Create the `prize_codes` table to store individual prize codes with fields for prize_id, code value, status (available/issued/expired), and issuance timestamp.\n3. Implement API endpoints for CRUD operations on prize definitions.\n4. Build inventory management logic to track remaining quantities and prevent over-issuance.\n5. Implement prize configuration validation using Zod schemas.",
+            "status": "pending",
+            "testStrategy": "Unit test prize creation, updating, and deletion. Test inventory tracking with edge cases like zero inventory. Verify validation prevents invalid configurations like negative quantities or invalid odds.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop prize issuance logic with concurrency control",
+            "description": "Build the core logic for issuing prizes with proper concurrency handling to prevent race conditions",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Implement a transactional prize issuance function that atomically checks inventory and issues prizes.\n2. Add database locking mechanisms to prevent race conditions during high-volume prize issuance.\n3. Create comprehensive logging for all prize issuances including user ID, timestamp, prize details, and issuance context.\n4. Implement prize selection logic based on configured odds and available inventory.\n5. Build error handling for edge cases like inventory depletion during issuance attempts.",
+            "status": "pending",
+            "testStrategy": "Stress test with concurrent prize issuance requests to verify no over-issuance occurs. Test prize selection matches configured odds over large sample sizes. Verify proper logging of all issuance attempts.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Integrate prize engine with event pipeline",
+            "description": "Connect the prize engine to the event processing pipeline to handle prize award events",
+            "dependencies": [
+              2
+            ],
+            "details": "1. Create event handlers for prize-related events in the event processing pipeline.\n2. Implement the prize award action block in the campaign configuration schema.\n3. Build the integration between event triggers and prize issuance logic.\n4. Add support for conditional prize awards based on user actions or game outcomes.\n5. Implement webhook notifications for prize issuances to external systems.\n6. Create admin dashboard components for monitoring prize issuance and inventory status.",
+            "status": "pending",
+            "testStrategy": "Test end-to-end flows from user actions through event pipeline to prize issuance. Verify conditional prize logic works correctly based on different event types. Test webhook notifications for prize awards.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the prize engine implementation into subtasks for: (1) prize configuration and inventory management, (2) prize issuance logic with concurrency control, and (3) integration with the event pipeline for prize award events.",
+        "updatedAt": "2026-02-06T07:46:49.011Z"
+      },
+      {
+        "id": "20",
+        "title": "Implement the form capture and submission storage",
+        "description": "Build the functionality to capture lead data from gamified experiences and store the submissions.",
+        "details": "1. Create the `submissions` table to store form/quiz responses.\n2. Implement the form block in the campaign configuration schema to define custom fields (text, dropdown, multi-select) and consent checkboxes.\n3. Integrate the form capture logic into the customer-facing snippet.\n4. Ensure all submissions are stored with the relevant workspace, campaign, and session metadata.",
+        "testStrategy": "Verify that form submissions are correctly captured and stored, and that the data can be accessed and integrated with other systems.",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "17",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define and implement form block schema with validation",
+            "description": "Create the form block schema in the campaign configuration to define custom fields and consent checkboxes",
+            "dependencies": [],
+            "details": "Extend the existing campaign configuration schema to include the form block with support for different field types (text, dropdown, multi-select) and consent checkboxes. Implement Zod validation for the form block schema to ensure proper configuration. Include validation rules for required fields, field types, and consent requirements. Ensure the schema supports localization for form labels and error messages.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify form block schema validation, including tests for valid and invalid configurations. Test edge cases like empty forms, forms with all field types, and forms with complex validation rules.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Integrate form capture logic into customer-facing snippet",
+            "description": "Implement the frontend logic to render and capture form data in the customer-facing snippet",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop the form rendering component in the customer-facing snippet that dynamically generates forms based on the campaign configuration. Implement form validation on the client side to provide immediate feedback to users. Create the data capture logic to collect form submissions and prepare them for transmission to the backend. Ensure the form UI is responsive and accessible across different devices and screen sizes.",
+            "status": "pending",
+            "testStrategy": "Create integration tests to verify form rendering and submission. Test form validation logic, error handling, and successful submission flows. Verify accessibility compliance and responsive design across different viewports.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement submission storage with metadata",
+            "description": "Create the submissions table and API endpoints to store form responses with proper metadata",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design and create the `submissions` database table to store form/quiz responses with appropriate columns for all field types. Implement API endpoints to receive and store form submissions from the snippet. Ensure all submissions are stored with relevant workspace, campaign, and session metadata for proper data segregation and retrieval. Add indexing for efficient querying of submissions by workspace, campaign, and time period.",
+            "status": "pending",
+            "testStrategy": "Test the submission storage API with various form configurations and submission payloads. Verify that all metadata is correctly associated with submissions. Test query performance for submission retrieval operations.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the form capture and submission storage implementation into subtasks for: (1) form block schema definition and validation, (2) form capture integration in the customer-facing snippet, and (3) submission storage with workspace and campaign metadata.",
+        "updatedAt": "2026-02-06T07:46:51.100Z"
+      },
+      {
+        "id": "21",
+        "title": "Implement the webhook integration",
+        "description": "Build the functionality to send campaign events and data to external systems via webhooks.",
+        "details": "1. Create the `integrations` and `integration_jobs` tables to store webhook configurations and sync logs.\n2. Implement the integration action block in the campaign configuration schema to define webhook endpoints and payloads.\n3. Integrate the webhook logic into the event processing pipeline to send events (form submissions, prize awards, etc.) to external systems.\n4. Implement retry logic with backoff for failed webhook calls, and provide visibility into integration job status.",
+        "testStrategy": "Verify that webhook integrations are correctly configured and that events are successfully delivered to external systems. Test error handling and retries.",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create database tables for webhook integration configuration",
+            "description": "Design and implement the database schema for storing webhook configurations and integration job logs",
+            "dependencies": [],
+            "details": "Create the `integrations` table to store webhook endpoint configurations including URL, headers, authentication details, and payload templates. Create the `integration_jobs` table to track webhook execution attempts, responses, and status. Add appropriate indexes and foreign key relationships. Include fields for retry counts, last attempt timestamp, and error messages.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify table creation and relationship integrity. Test CRUD operations on both tables to ensure proper data storage and retrieval.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement webhook sending logic with payload formatting",
+            "description": "Build the core functionality to format and send webhook payloads to configured external endpoints",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a WebhookService class to handle payload formatting based on templates defined in the integration configuration. Implement JSON transformation utilities to map campaign events to the expected webhook payload structure. Add HTTP client implementation with proper timeout handling, response parsing, and error categorization. Integrate with the event processing pipeline to trigger webhooks on relevant campaign events (form submissions, prize awards, etc.).",
+            "status": "pending",
+            "testStrategy": "Create mock HTTP endpoints to test webhook delivery. Verify payload formatting matches templates. Test error handling for various HTTP response codes and network failures.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement retry mechanism with backoff and status tracking",
+            "description": "Build a robust retry system for failed webhook deliveries with exponential backoff and comprehensive status tracking",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement an exponential backoff algorithm for retrying failed webhook calls. Create a job scheduler to manage retry attempts based on configurable parameters (max retries, initial delay, backoff factor). Update the integration_jobs table with detailed status information after each attempt. Implement a dashboard view to provide visibility into integration job status, including success rates, failure reasons, and retry statistics. Add alerting for consistently failing webhooks.",
+            "status": "pending",
+            "testStrategy": "Test retry logic with simulated failures to verify backoff behavior. Verify job status updates correctly reflect delivery attempts. Test edge cases like maximum retries reached and permanent failures.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the webhook integration implementation into subtasks for: (1) integration configuration storage and management, (2) webhook sending logic with payload formatting, and (3) retry mechanism with backoff and status tracking.",
+        "updatedAt": "2026-02-06T07:47:22.535Z"
+      },
+      {
+        "id": "22",
+        "title": "Build the analytics dashboard",
+        "description": "Implement the reporting and analytics functionality to provide insights into campaign performance.",
+        "details": "1. Create the `events_agg_daily` table (or equivalent aggregates) to store daily metrics.\n2. Integrate PostHog (or a similar analytics platform) to power the dashboard.\n3. Implement metrics for impressions, opens, plays, completions, submissions, conversion rates, and prize claims.\n4. Provide breakdowns by campaign version and other relevant dimensions.",
+        "testStrategy": "Verify that the dashboard accurately reflects the campaign performance data, and that the metrics are consistent with the underlying event data.",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "18"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement aggregated metrics storage and calculation system",
+            "description": "Create the data storage and calculation logic for aggregating campaign analytics metrics on a daily basis",
+            "dependencies": [],
+            "details": "1. Design and create the `events_agg_daily` table schema with appropriate columns for all required metrics (impressions, opens, plays, completions, submissions, conversion rates, prize claims).\n2. Implement ETL processes to aggregate raw event data into daily summaries.\n3. Create database queries and functions to calculate derived metrics like conversion rates.\n4. Set up scheduled jobs to refresh aggregated data at regular intervals.\n5. Implement caching mechanisms for frequently accessed metrics to improve dashboard performance.",
+            "status": "pending",
+            "testStrategy": "Verify aggregated metrics match raw event data. Test performance with large datasets. Ensure data consistency across different time periods. Validate that all required metrics are correctly calculated.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build dashboard UI with charts and visualizations",
+            "description": "Develop the frontend interface for the analytics dashboard with interactive charts and data visualizations",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Integrate PostHog or similar analytics platform for visualization capabilities.\n2. Design and implement UI components for different chart types (line charts, bar charts, funnels, etc.).\n3. Create dashboard layout with appropriate sections for key metrics.\n4. Implement real-time or near real-time data updates using WebSockets or polling.\n5. Add tooltips and explanatory elements to help users understand metrics.\n6. Ensure responsive design for different screen sizes.",
+            "status": "pending",
+            "testStrategy": "Test UI rendering across different browsers and screen sizes. Verify chart data accuracy against backend data. Test interactive features like tooltips and hover states. Validate accessibility compliance.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement filtering and breakdown functionality",
+            "description": "Add capabilities to filter analytics data and break down metrics by campaign version and other dimensions",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "1. Design and implement filter controls for time periods, campaign versions, and other relevant dimensions.\n2. Create backend API endpoints to support filtered data queries.\n3. Implement UI components for selecting and displaying breakdown dimensions.\n4. Add comparison functionality to view metrics across different campaign versions side by side.\n5. Ensure filter state is preserved in URL parameters for sharing and bookmarking.\n6. Optimize query performance for filtered and breakdown views.",
+            "status": "pending",
+            "testStrategy": "Test filter combinations to ensure correct data is returned. Verify breakdown calculations match expected results. Test performance with multiple simultaneous filters. Validate URL parameter state preservation.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down the analytics dashboard implementation into subtasks for: (1) aggregated metrics storage and calculation, (2) dashboard UI with charts and visualizations, and (3) filtering and breakdown functionality by campaign version and other dimensions.",
+        "updatedAt": "2026-02-06T07:47:24.355Z"
+      },
+      {
+        "id": "23",
+        "title": "Polish the platform and prepare for launch",
+        "description": "Finalize the MVP by implementing additional features, improving the user experience, and ensuring comprehensive testing and documentation.",
+        "details": "1. Expand the game template library to include the MVP set (spin-to-win, scratchcard, quiz, poll/survey).\n2. Implement a brand kit feature to allow customization of colors, fonts, and logos.\n3. Conduct thorough QA testing across all functionality, including edge cases and error handling.\n4. Create comprehensive user documentation and onboarding materials.\n5. Ensure all security and compliance requirements are met.",
+        "testStrategy": "Perform end-to-end testing of the platform, including creating and publishing campaigns, verifying user interactions, and validating integrations. Review the documentation for completeness and accuracy.",
+        "priority": "medium",
+        "dependencies": [
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Expand Game Template Library",
+            "description": "Develop and integrate the complete set of MVP game templates including spin-to-win, scratchcard, quiz, and poll/survey.",
+            "dependencies": [],
+            "details": "Create reusable, configurable templates for each game type with consistent APIs. Implement the spin-to-win wheel with customizable segments and animations. Build the scratchcard with reveal mechanics and prize display. Develop the quiz template with scoring logic and multiple question types. Create the poll/survey template with various input types and data collection capabilities. Ensure all templates integrate with the prize engine and event pipeline.",
+            "status": "pending",
+            "testStrategy": "Test each template individually with various configurations. Verify integration with the prize engine and event tracking. Ensure mobile and desktop compatibility across browsers.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Brand Kit Feature",
+            "description": "Create a comprehensive brand customization system allowing clients to configure colors, fonts, and logos across all templates.",
+            "dependencies": [
+              1
+            ],
+            "details": "Design and implement a brand configuration schema that supports color palettes, typography settings, and logo uploads. Create a UI for managing brand kits with preview capabilities. Develop a theming system that applies brand settings consistently across all game templates. Implement asset management for logos and custom images. Ensure the brand kit settings are properly stored and associated with workspaces.",
+            "status": "pending",
+            "testStrategy": "Verify that brand settings are correctly applied across all templates. Test the brand kit UI for usability. Ensure brand assets are properly stored, retrieved, and displayed.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Conduct Comprehensive QA Testing",
+            "description": "Perform thorough quality assurance testing across all platform functionality, focusing on edge cases and error handling.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Develop a comprehensive test plan covering all user flows and system components. Test campaign creation, configuration, and publishing workflows. Verify game template functionality across devices and browsers. Test integration points with external systems via webhooks. Validate prize issuance and inventory management. Identify and fix bugs, performance issues, and UI/UX inconsistencies. Perform security testing to identify vulnerabilities.",
+            "status": "pending",
+            "testStrategy": "Use a combination of manual and automated testing. Create test cases for critical user flows. Perform cross-browser and cross-device testing. Conduct load testing to ensure performance under expected traffic.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Documentation and Onboarding Materials",
+            "description": "Develop comprehensive user documentation, help center content, and onboarding materials for the platform.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create detailed user guides for all platform features including campaign creation, game configuration, and analytics. Develop step-by-step onboarding tutorials for new users. Create video walkthroughs of key workflows. Write technical documentation for API integrations and webhook usage. Implement an in-app help system with contextual guidance. Prepare launch materials including quickstart guides and best practices documentation.",
+            "status": "pending",
+            "testStrategy": "Review documentation with test users for clarity and completeness. Verify that all platform features are adequately documented. Test the in-app help system for accessibility and usefulness.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the platform polishing and launch preparation into subtasks for: (1) game template library expansion, (2) brand kit feature implementation, (3) comprehensive QA testing and bug fixing, and (4) documentation and onboarding materials creation.",
+        "updatedAt": "2026-02-06T07:47:26.152Z"
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2026-02-06T07:47:30.291Z",
+      "taskCount": 23,
+      "completedCount": 23,
+      "tags": [
+        "master"
+      ]
+    }
+  }
+}
