@@ -31,7 +31,7 @@ export const GameTemplateSchema = z.object({
     category: GameCategorySchema,
     gameType: z.enum(['spin_to_win', 'scratchcard', 'quiz', 'poll_survey']),
     thumbnail: z.string().url().optional(),
-    defaultConfig: z.record(z.unknown()),
+    defaultConfig: z.record(z.string(), z.unknown()),
     tags: z.array(z.string()).optional(),
 });
 

@@ -50,7 +50,7 @@ export async function processEventBatch(): Promise<{ processed: number; errors: 
         }
 
         // Update aggregations in database
-        for (const [aggKey, eventCounts] of aggregations) {
+        for (const [aggKey, eventCounts] of Array.from(aggregations.entries())) {
             const [workspaceId, campaignId, dateStr] = aggKey.split(':');
             const date = new Date(dateStr);
 

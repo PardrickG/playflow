@@ -272,7 +272,7 @@ export const IntegrationActionBlockSchema = z.object({
     type: z.literal('integration_action'),
     integrationId: z.string(),
     action: z.enum(['sync_contact', 'add_tag', 'send_event']),
-    payload: z.record(z.unknown()).optional(),
+    payload: z.record(z.string(), z.unknown()).optional(),
     nextBlockId: z.string().optional(),
 });
 
